@@ -12,11 +12,13 @@ const sync = async () => {
 
   CREATE TABLE movies(
     id SERIAL,
-    Title VARCHAR(255) NOT NULL,
-    Year INT
+    Title VARCHAR(255) NOT NULL UNIQUE,
+    Year INT,
+    Poster VARCHAR(255)
   );
 
-  INSERT INTO movies (Title, Year) VALUES ('Parasite', '2019')
+  INSERT INTO movies (Title, Year, Poster) VALUES ('Parasite', '2019', 'https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg
+  ')
   ;
 
 `;
@@ -29,12 +31,20 @@ const readMovies = async () => {
 };
 
 const addMovie = async movie => {
-	const SQL = "INSERT INTO movies(Title, Year) values($1, $2) returning *";
-	return (await client.query(SQL, [movie.Title, movie.Year])).rows[0];
+	const SQL =
+		"INSERT INTO movies(Title, Year, Poster) values($1, $2, $3) returning *";
+	return (await client.query(SQL, [movie.Title, movie.Year, movie.Poster]))
+		.rows[0];
+};
+
+const delMovie = async id => {
+	const SQL = "DELETE FROM movies where id= $1";
+	await client.query(SQL, [id]);
 };
 
 module.exports = {
 	sync,
 	readMovies,
-	addMovie
+	addMovie,
+	delMovie
 };
