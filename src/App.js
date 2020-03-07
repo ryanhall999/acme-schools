@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import InputForm from "./Components/InputForm";
+import UserRating from "./Components/UserRating";
+import MovieList from "./Components/MovieList";
+import { FetchMovie } from "./Components/CreateMovie";
+import { avgRating, avgIMBDRating } from "./Components/util";
+import "./app.css";
 
 function App() {
 	const [movies, setMovies] = useState([]);
@@ -17,29 +22,12 @@ function App() {
 	const createMovie = async e => {
 		e.preventDefault();
 		let movie = e.target[0].value;
-		let movieToCreate;
-		let poster;
-		await axios({
-			method: "GET",
-			url: "https://movie-database-imdb-alternative.p.rapidapi.com/",
-			headers: {
-				"content-type": "application/octet-stream",
-				"x-rapidapi-host": "movie-database-imdb-alternative.p.rapidapi.com",
-				"x-rapidapi-key": "65dc49f6eamsh84846df4dd813c2p1231afjsnced63f581170"
-			},
-			params: {
-				r: "json",
-				s: `${movie}`
-			}
-		})
-			.then(response => {
-				movieToCreate = response.data.Search[0];
-			})
-			.catch(error => {
-				console.log(error);
-			});
-		const created = (await axios.post("/api/movies", movieToCreate)).data;
-		setMovies(created);
+		let movieToCreate = await FetchMovie(movie);
+		await axios.post("/api/movies", movieToCreate).then(response => {
+			let copy = [...movies];
+			copy.push(response.data);
+			setMovies(copy);
+		});
 	};
 
 	const destroyMovie = async movieToDelete => {
@@ -50,28 +38,43 @@ function App() {
 			console.log(ex.response.data.message);
 		}
 	};
-	console.log(movies);
+
+	const updateRating = async (e, movieToUpdate) => {
+		e.preventDefault();
+		let rating = e.target.previousElementSibling.value;
+		let id = movieToUpdate.id;
+		try {
+			axios.put(`/api/movies/`, { id, rating }).then(response => {
+				let words = [...movies.filter(movie => movie.id !== id), response.data];
+				setMovies(words);
+			});
+		} catch (ex) {
+			console.log(ex.response.data.message);
+		}
+	};
 
 	return (
-		<div>
-			<div className="stats">Stats</div>
-			<div className="listContainer">
-				<div className="addMovie">
-					<InputForm createMovie={createMovie} />
+		<div className="red">
+			<div className="outerBox">
+				<div className="stats">
+					<div>Stats: Movies {movies.length}</div>
+					<div>AVG IMBD Rating: {avgIMBDRating(movies)}</div>
+					<div>AVG Rating: {avgRating(movies)}</div>
 				</div>
-				<div className="movieList">
-					<h1>Movie List</h1>
-					{movies.map(movie => {
-						return (
-							<li key={movie.id}>
-								{movie.title}
-								{movie.year}
-								<br></br>
-								<img src={movie.poster} />
-								<button onClick={() => destroyMovie(movie)}>x</button>
-							</li>
-						);
-					})}
+				<div className="innerBox">
+					<div className="listContainer">
+						<div className="addMovie">
+							<InputForm createMovie={createMovie} />
+						</div>
+						<div className="movieList">
+							<MovieList
+								movies={movies}
+								UserRating={UserRating}
+								updateRating={updateRating}
+								destroyMovie={destroyMovie}
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

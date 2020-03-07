@@ -13,15 +13,16 @@ const sync = async () => {
   CREATE TABLE movies(
     id SERIAL,
     Title VARCHAR(255) NOT NULL UNIQUE,
-    Year INT,
-    Poster VARCHAR(255)
+    Year VARCHAR(255),
+    Poster VARCHAR(65535),
+    Overview VARCHAR(65535),
+    UserRating FLOAT,
+    VoteAVG FLOAT,
+    Background VARCHAR(65535)
   );
-
-  INSERT INTO movies (Title, Year, Poster) VALUES ('Parasite', '2019', 'https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg
-  ')
-  ;
-
-`;
+  INSERT INTO movies (Title, Year, Poster, Overview, UserRating, VoteAvg) VALUES ('Parasite', '2019-11-8',
+   'https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg
+  ', '"All unemployed, Ki-taeks family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident."', '9', '8.6');`;
 	client.query(SQL);
 };
 
@@ -32,9 +33,17 @@ const readMovies = async () => {
 
 const addMovie = async movie => {
 	const SQL =
-		"INSERT INTO movies(Title, Year, Poster) values($1, $2, $3) returning *";
-	return (await client.query(SQL, [movie.Title, movie.Year, movie.Poster]))
-		.rows[0];
+		"INSERT INTO movies(Title, Year, Poster, Overview, VoteAVG, Background) values($1, $2, $3, $4, $5, $6) returning *";
+	return (
+		await client.query(SQL, [
+			movie.original_title,
+			movie.release_date,
+			movie.poster,
+			movie.overview,
+			movie.vote_average,
+			movie.backdrop_path
+		])
+	).rows[0];
 };
 
 const delMovie = async id => {
@@ -42,9 +51,15 @@ const delMovie = async id => {
 	await client.query(SQL, [id]);
 };
 
+const upMovie = async (id, rating) => {
+	const SQL = "UPDATE movies SET UserRating = $1 WHERE id = $2 returning *;";
+	return (await client.query(SQL, [rating, id])).rows[0];
+};
+
 module.exports = {
 	sync,
 	readMovies,
 	addMovie,
-	delMovie
+	delMovie,
+	upMovie
 };

@@ -20,14 +20,19 @@ app.get("/api/movies", (req, res, next) => {
 });
 
 app.post("/api/movies", (req, res, next) => {
-	console.log(req.body);
 	db.addMovie(req.body)
 		.then(movies => res.send(movies))
 		.catch(next);
 });
 
 app.delete("/api/movies/:id", (req, res, next) => {
-	db.delMovie()
+	db.delMovie(req.params.id)
+		.then(movies => res.send(movies))
+		.catch(next);
+});
+
+app.put("/api/movies/", (req, res, next) => {
+	db.upMovie(req.body.id, req.body.rating)
 		.then(movies => res.send(movies))
 		.catch(next);
 });

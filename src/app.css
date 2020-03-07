@@ -1,0 +1,61 @@
+.outerBox {
+	display: flex;
+	flex-direction: column;
+}
+
+.stats {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
+.innerBox {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.addMovie {
+	flex-grow: 1;
+	margin: 1rem;
+}
+
+.movieList {
+	flex-grow: 3;
+	margin: 1rem;
+}
+
+.film {
+	display: flex;
+	flex-direction: row;
+	border: 1px solid;
+	margin: 2rem;
+	padding: 1rem;
+	color: white;
+	background-size: 100% 100%;
+	opacity: 75%;
+}
+
+.listContainer {
+	display: flex;
+	flex-direction: row;
+}
+
+li {
+	list-style-type: none;
+}
+
+body {
+	font-size: 16px;
+	background-color: dimgrey;
+}
+
+.filmInfo {
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+}
+.ratingInfo {
+	display: flex;
+	flex-direction: column;
+}
