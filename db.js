@@ -18,11 +18,12 @@ const sync = async () => {
     Overview VARCHAR(65535),
     UserRating FLOAT,
     VoteAVG FLOAT,
-    Background VARCHAR(65535)
+		Background VARCHAR(65535),
+		DateWatched DATE
   );
-  INSERT INTO movies (Title, Year, Poster, Overview, UserRating, VoteAvg) VALUES ('Parasite', '2019-11-8',
+  INSERT INTO movies (Title, Year, Poster, Overview, UserRating, VoteAvg, Background, DateWatched) VALUES ('Parasite', '2019-11-8',
    'https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg
-  ', '"All unemployed, Ki-taeks family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident."', '9', '8.6');`;
+  ', '"All unemployed, Ki-taeks family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident."', '9', '8.6', '/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg', '2020-03-08');`;
 	client.query(SQL);
 };
 
@@ -33,7 +34,7 @@ const readMovies = async () => {
 
 const addMovie = async movie => {
 	const SQL =
-		"INSERT INTO movies(Title, Year, Poster, Overview, VoteAVG, Background) values($1, $2, $3, $4, $5, $6) returning *";
+		"INSERT INTO movies(Title, Year, Poster, Overview, VoteAVG, Background, DateWatched) values($1, $2, $3, $4, $5, $6, $7) returning *";
 	return (
 		await client.query(SQL, [
 			movie.original_title,
@@ -41,7 +42,8 @@ const addMovie = async movie => {
 			movie.poster,
 			movie.overview,
 			movie.vote_average,
-			movie.backdrop_path
+			movie.backdrop_path,
+			movie.dateWatched
 		])
 	).rows[0];
 };

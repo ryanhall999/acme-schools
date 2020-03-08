@@ -3,6 +3,7 @@ import axios from "axios";
 import InputForm from "./Components/InputForm";
 import UserRating from "./Components/UserRating";
 import MovieList from "./Components/MovieList";
+import Stats from "./Components/Stats";
 import { FetchMovie } from "./Components/CreateMovie";
 import { avgRating, avgIMBDRating } from "./Components/util";
 import "./app.css";
@@ -22,7 +23,10 @@ function App() {
 	const createMovie = async e => {
 		e.preventDefault();
 		let movie = e.target[0].value;
+		let date = e.target[1].value;
+		e.target[0].value = "";
 		let movieToCreate = await FetchMovie(movie);
+		movieToCreate.dateWatched = date;
 		await axios.post("/api/movies", movieToCreate).then(response => {
 			let copy = [...movies];
 			copy.push(response.data);
@@ -54,13 +58,9 @@ function App() {
 	};
 
 	return (
-		<div className="red">
+		<div>
 			<div className="outerBox">
-				<div className="stats">
-					<div>Stats: Movies {movies.length}</div>
-					<div>AVG IMBD Rating: {avgIMBDRating(movies)}</div>
-					<div>AVG Rating: {avgRating(movies)}</div>
-				</div>
+				<Stats movies={movies} />
 				<div className="innerBox">
 					<div className="listContainer">
 						<div className="addMovie">

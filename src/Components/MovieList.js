@@ -1,14 +1,13 @@
 import React from "react";
-import { sortById } from "./util";
+import { sortById, formatDate } from "./util";
 
 export default function({ movies, UserRating, updateRating, destroyMovie }) {
-	console.log(movies);
 	movies = sortById(movies);
-	console.log(movies);
 	return (
 		<div>
 			<h1>Movie List</h1>
 			{movies.map(movie => {
+				let date = formatDate(movie.datewatched);
 				return (
 					<li
 						className="film"
@@ -19,12 +18,13 @@ export default function({ movies, UserRating, updateRating, destroyMovie }) {
 					>
 						<img src={movie.poster} />
 						<div className="filmInfo">
-							{movie.title}
+							Title: {movie.title}
 							<br></br>
-							{movie.year}
+							Date Released: {movie.year}
 							<br></br>
-							{movie.overview}
+							Description: {movie.overview}
 							<br></br>
+							Date Watched: {date}
 						</div>
 						<div className="ratingInfo">
 							IMBD User Rating: {movie.voteavg}

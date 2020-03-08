@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const db = require("./db");
 const morgan = require("morgan");
+
 app.use(express.json());
 
 morgan(":method :url :status :res[content-length] - :response-time ms");
@@ -20,6 +21,7 @@ app.get("/api/movies", (req, res, next) => {
 });
 
 app.post("/api/movies", (req, res, next) => {
+	console.log(req.body);
 	db.addMovie(req.body)
 		.then(movies => res.send(movies))
 		.catch(next);
