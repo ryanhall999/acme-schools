@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import axios from "axios";
-import InputForm from "./Components/InputForm";
-import UserRating from "./Components/UserRating";
-import MovieList from "./Components/MovieList";
-import Stats from "./Components/Stats";
+import Home from "./Components/Home";
+import FullList from "./Components/FullList";
 import { FetchMovie } from "./Components/CreateMovie";
-import { avgRating, avgIMBDRating, getToday } from "./Components/util";
 
 function App() {
 	const [movies, setMovies] = useState([]);
@@ -72,26 +70,34 @@ function App() {
 	};
 
 	return (
-		<div>
-			<div className="outerBox">
-				<Stats movies={movies} />
-				<div className="innerBox">
-					<div className="listContainer">
-						<div className="addMovie">
-							<InputForm createMovie={createMovie} movies={movies} />
-						</div>
-						<div className="movieList">
-							<MovieList
-								movies={movies}
-								UserRating={UserRating}
-								updateRating={updateRating}
-								destroyMovie={destroyMovie}
-							/>
-						</div>
-					</div>
-				</div>
+		<Router>
+			<div>
+				<nav className="nav">
+					<Link to="/">Home</Link>
+					<Link to="/list">Full List</Link>
+				</nav>
+				{/* A <Switch> looks through its children <Route>s and
+						renders the first one that matches the current URL. */}
+				<Switch>
+					<Route path="/list">
+						<FullList
+							movies={movies}
+							createMovie={createMovie}
+							updateRating={updateRating}
+							destroyMovie={destroyMovie}
+						/>
+					</Route>
+					<Route path="/">
+						<Home
+							movies={movies}
+							createMovie={createMovie}
+							updateRating={updateRating}
+							destroyMovie={destroyMovie}
+						/>
+					</Route>
+				</Switch>
 			</div>
-		</div>
+		</Router>
 	);
 }
 

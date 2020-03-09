@@ -10,8 +10,11 @@ export default function InputForm({ createMovie, movies }) {
 				<label htmlFor="mname">Add Movie:</label>
 				<br></br>
 				<input type="text" id="fname" name="mname"></input>
+				<br></br>
 				Date Watched:
+				<br></br>
 				<input type="date" defaultValue={today}></input>
+				<br></br>
 				<input type="submit" value="Submit"></input>
 			</form>
 			<div>

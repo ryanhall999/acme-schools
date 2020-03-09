@@ -34,9 +34,9 @@
 	border: 1px solid;
 	margin: 2rem;
 	padding: 2rem;
-	color: white;
+	color: rgba(224, 213, 190, 0.845);
 	background-size: 100% 100%;
-	opacity: 90%;
+	opacity: 95%;
 }
 
 .listContainer {
@@ -55,12 +55,13 @@ body {
 	font-size: 16px;
 	letter-spacing: 2px;
 	word-spacing: 2px;
-	color: #f9f9f9;
 	font-weight: 700;
 	font-style: normal;
 	font-variant: small-caps;
-	background-image: url("https://i.ytimg.com/vi/ifVEMkQ9BaY/maxresdefault.jpg");
+	background-image: url("https://media.istockphoto.com/vectors/illustration-of-film-reel-stripe-on-abstract-background-vector-id893522844?k=6&m=893522844&s=170667a&w=0&h=Y0YAPQcDgwlwMU0oFZHHkbqUQwd_w1hE8BnCGk8dhcw=");
 	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 }
 
 .filmInfo {
@@ -80,4 +81,14 @@ form {
 
 .dayList {
 	font-size: smaller;
+}
+
+.nav {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
+.film button {
+	margin: 1rem;
 }
