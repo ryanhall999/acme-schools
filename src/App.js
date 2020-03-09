@@ -27,15 +27,11 @@ function App() {
 			alert("Please enter a Film");
 			return createMovie;
 		}
-		console.log(e.target[1].value);
 		if (e.target[1].value !== "") {
 			date = e.target[1].value;
-			console.log(date);
 		} else {
 			date = getToday();
-			console.log(date);
 		}
-		console.log(date);
 		e.target[0].value = "";
 		let movieToCreate = await FetchMovie(movie);
 		movieToCreate.dateWatched = date;
@@ -68,6 +64,7 @@ function App() {
 			console.log(ex.response.data.message);
 		}
 	};
+	console.log(movies);
 
 	return (
 		<Router>
@@ -76,8 +73,6 @@ function App() {
 					<Link to="/">Home</Link>
 					<Link to="/list">Full List</Link>
 				</nav>
-				{/* A <Switch> looks through its children <Route>s and
-						renders the first one that matches the current URL. */}
 				<Switch>
 					<Route path="/list">
 						<FullList
