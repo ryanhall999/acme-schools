@@ -26,19 +26,16 @@ export default function({ movies, UserRating, updateRating, destroyMovie }) {
 					>
 						<img src={movie.poster} />
 						<div className="filmInfo">
-							Title: {movie.title}
-							<br></br>
-							Date Released: {movie.year}
-							<br></br>
-							Description: {movie.overview}
-							<br></br>
-							Date Watched: {date}
+							<div>Title: {movie.title}</div>
+							<div>Date Released: {movie.year}</div>
+							<div>Description: {movie.overview}</div>
+							<div> Date Watched: {date}</div>
 						</div>
 						<div className="ratingInfo">
-							IMBD User Rating: {movie.voteavg}
-							<br></br>
-							<UserRating movie={movie} updateRating={updateRating} />
-							<br></br>
+							<div>IMBD User Rating: {movie.voteavg}</div>
+							<div>
+								<UserRating movie={movie} updateRating={updateRating} />
+							</div>
 						</div>
 						<button onClick={() => destroyMovie(movie)}>x</button>
 					</li>
