@@ -1,5 +1,5 @@
 import React from "react";
-import { avgRating, avgIMBDRating } from "./util";
+import { avgRating, avgIMBDRating, countDays } from "./util";
 
 export default function Stats({ movies }) {
 	return (

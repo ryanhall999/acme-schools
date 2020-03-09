@@ -32,4 +32,33 @@ function formatDate(date) {
 	return [year, month, day].join("-");
 }
 
-export { sortById, avgRating, avgIMBDRating, formatDate };
+function countDays(movies) {
+	let dateObj = {
+		0: 0,
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0,
+		6: 0
+	};
+	if (movies[0]) {
+		movies.forEach(movie => {
+			let day = new Date(movie.datewatched);
+			let date = day.getDay();
+			dateObj[`${date}`] += 1;
+		});
+	}
+	return dateObj;
+}
+
+function getToday() {
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, "0");
+	var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+	var yyyy = today.getFullYear();
+	today = yyyy + "-" + mm + "-" + dd;
+	return today;
+}
+
+export { sortById, avgRating, avgIMBDRating, formatDate, countDays, getToday };

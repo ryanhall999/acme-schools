@@ -5,8 +5,7 @@ import UserRating from "./Components/UserRating";
 import MovieList from "./Components/MovieList";
 import Stats from "./Components/Stats";
 import { FetchMovie } from "./Components/CreateMovie";
-import { avgRating, avgIMBDRating } from "./Components/util";
-import "./app.css";
+import { avgRating, avgIMBDRating, getToday } from "./Components/util";
 
 function App() {
 	const [movies, setMovies] = useState([]);
@@ -21,9 +20,24 @@ function App() {
 	}, []);
 
 	const createMovie = async e => {
+		let date;
+		let movie;
 		e.preventDefault();
-		let movie = e.target[0].value;
-		let date = e.target[1].value;
+		if (e.target[0].value !== "") {
+			movie = e.target[0].value;
+		} else {
+			alert("Please enter a Film");
+			return createMovie;
+		}
+		console.log(e.target[1].value);
+		if (e.target[1].value !== "") {
+			date = e.target[1].value;
+			console.log(date);
+		} else {
+			date = getToday();
+			console.log(date);
+		}
+		console.log(date);
 		e.target[0].value = "";
 		let movieToCreate = await FetchMovie(movie);
 		movieToCreate.dateWatched = date;
@@ -64,7 +78,7 @@ function App() {
 				<div className="innerBox">
 					<div className="listContainer">
 						<div className="addMovie">
-							<InputForm createMovie={createMovie} />
+							<InputForm createMovie={createMovie} movies={movies} />
 						</div>
 						<div className="movieList">
 							<MovieList

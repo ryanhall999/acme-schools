@@ -9,6 +9,7 @@ app.use(express.json());
 morgan(":method :url :status :res[content-length] - :response-time ms");
 
 app.use("/dist", express.static("dist"));
+app.use("/css", express.static("css"));
 
 app.get("/", (req, res, next) => {
 	res.sendFile(path.join(__dirname, "index.html"));
@@ -21,7 +22,6 @@ app.get("/api/movies", (req, res, next) => {
 });
 
 app.post("/api/movies", (req, res, next) => {
-	console.log(req.body);
 	db.addMovie(req.body)
 		.then(movies => res.send(movies))
 		.catch(next);
