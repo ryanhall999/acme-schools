@@ -11,7 +11,9 @@ export default function({ movies, UserRating, updateRating, destroyMovie }) {
 	}
 	return (
 		<div>
-			<h1>Movie List</h1>
+			<h1 style={{ textDecoration: "underline", textAlign: "center" }}>
+				Movie List
+			</h1>
 			{partMovies.map(movie => {
 				let date = formatDate(movie.datewatched);
 				return (

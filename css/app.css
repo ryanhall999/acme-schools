@@ -21,6 +21,8 @@
 .addMovie {
 	flex-grow: 1;
 	margin: 1rem;
+	border-right: solid 3px white;
+	padding: 1rem;
 }
 
 .movieList {
@@ -37,6 +39,9 @@
 	color: rgba(224, 213, 190, 0.845);
 	background-size: 100% 100%;
 	opacity: 95%;
+	box-shadow: 5px 5px 15px 5px #000000;
+	text-shadow: 2px 2px 2px #000000;
+	border-radius: 10px;
 }
 
 .listContainer {
@@ -62,6 +67,7 @@ body {
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
+	text-shadow: 2px 2px 2px #000000;
 }
 
 .filmInfo {

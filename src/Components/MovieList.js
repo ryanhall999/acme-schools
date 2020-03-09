@@ -10,7 +10,9 @@ export default function({ movies, UserRating, updateRating, destroyMovie }) {
 				<Stats movies={movies} />
 			</div>
 			<div>
-				<h1>Movie List</h1>
+				<h1 style={{ textDecoration: "underline", textAlign: "center" }}>
+					Movie List
+				</h1>
 				{movies.map(movie => {
 					let date = formatDate(movie.datewatched);
 					return (

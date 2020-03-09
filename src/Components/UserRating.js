@@ -2,11 +2,11 @@ import React from "react";
 
 export default function UserRating({ movie, updateRating }) {
 	if (movie.userrating !== null) {
-		return <div>User Rating: {movie.userrating}</div>;
+		return <div>Your Rating: {movie.userrating}</div>;
 	} else if (movie.userrating === null) {
 		return (
 			<div>
-				<label htmlFor="userRating">Set User Rating:</label>
+				<label htmlFor="userRating">Set Your Rating:</label>
 				<select id="userRating">
 					<option value="1">1</option>
 					<option value="2">2</option>
@@ -19,9 +19,7 @@ export default function UserRating({ movie, updateRating }) {
 					<option value="9">9</option>
 					<option value="10">10</option>
 				</select>
-				<button onClick={e => updateRating(e, movie)}>
-					Update User Rating
-				</button>
+				<button onClick={e => updateRating(e, movie)}>Update Rating</button>
 			</div>
 		);
 	}

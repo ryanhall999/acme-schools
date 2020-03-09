@@ -19,7 +19,7 @@ export default function InputForm({ createMovie, movies }) {
 			</form>
 			<div>
 				<div className="dayList">
-					<h3>Most Days Watched</h3>
+					<h5>Most Days Watched:</h5>
 					<ul>
 						<li>Sunday: {dates[0]}</li>
 						<li>Monday: {dates[1]}</li>
