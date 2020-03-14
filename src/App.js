@@ -1,100 +1,177 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import axios from "axios";
-import Home from "./Components/Home";
-import FullList from "./Components/FullList";
-import { FetchMovie } from "./Components/CreateMovie";
+import { getSchoolIdByName, getUnenrolled, getStudentIdByName } from "./util";
+import School from "./Components/School";
+import qs from "qs";
+import Main from "./Components/Main";
+import Student from "./Components/Student";
 
 function App() {
-	const [movies, setMovies] = useState([]);
+	const [students, setStudents] = useState([]);
+	const [schools, setSchools] = useState([]);
+	const [studentSchools, setstudentSchools] = useState([]);
 
 	useEffect(() => {
-		Promise.all([axios.get("/api/movies")])
+		Promise.all([
+			axios.get("/api/students"),
+			axios.get("/api/schools"),
+			axios.get("/api/studentSchools")
+		])
 			.then(responses => responses.map(response => response.data))
 			.then(results => {
-				setMovies(results[0]);
+				setStudents(results[0]);
+				setSchools(results[1]);
+				setstudentSchools(results[2]);
 			})
 			.catch(ex => console.log(ex.response.data.message));
 	}, []);
 
-	const createMovie = async e => {
-		let date;
-		let movie;
+	const createStudent = async e => {
 		e.preventDefault();
+		let studentId;
+		let schoolName = e.target[1].value;
+		let studentToCreate = {};
+		let studentSchoolToCreate = {};
 		if (e.target[0].value !== "") {
-			movie = e.target[0].value;
+			studentToCreate.name = e.target[0].value;
+			e.target[0].value = "";
 		} else {
-			alert("Please enter a Film");
-			return createMovie;
+			alert("Please enter a Name");
+			return createStudent;
 		}
-		if (e.target[1].value !== "") {
-			date = e.target[1].value;
+		await axios.post("/api/students", studentToCreate).then(response => {
+			let copy = [...students];
+			copy.push(response.data[0]);
+			studentId = response.data[0].studentid;
+			setStudents(copy);
+		});
+		if (schoolName !== "none") {
+			studentSchoolToCreate.schoolId = getSchoolIdByName(
+				schoolName,
+				schools
+			)[0].schoolid;
+			studentSchoolToCreate.studentId = studentId;
+			await axios
+				.post("/api/studentSchools", studentSchoolToCreate)
+				.then(response => {
+					let copy = [...studentSchools];
+					copy.push(response.data[0]);
+					setstudentSchools(copy);
+				});
+		}
+	};
+
+	const createSchool = async e => {
+		e.preventDefault();
+		let schoolToCreate = {};
+		if (e.target[0].value !== "") {
+			schoolToCreate.name = e.target[0].value;
+			e.target[0].value = "";
 		} else {
-			date = getToday();
+			alert("Please enter a School");
+			return createSchool;
 		}
-		e.target[0].value = "";
-		let movieToCreate = await FetchMovie(movie);
-		movieToCreate.dateWatched = date;
-		await axios.post("/api/movies", movieToCreate).then(response => {
-			let copy = [...movies];
-			copy.push(response.data);
-			setMovies(copy);
+		await axios.post("/api/schools", schoolToCreate).then(response => {
+			let copy = [...schools];
+			copy.push(response.data[0]);
+			setSchools(copy);
 		});
 	};
 
-	const destroyMovie = async movieToDelete => {
-		try {
-			await axios.delete(`/api/movies/${movieToDelete.id}`);
-			setMovies(movies.filter(movie => movie.id !== movieToDelete.id));
-		} catch (ex) {
-			console.log(ex.response.data.message);
-		}
+	const deleteStudent = async (e, studentToDelete) => {
+		e.preventDefault();
+		await axios
+			.delete(`/api/students/${studentToDelete.id}`)
+			.then(response => console.log(response));
+		setSchools(
+			students.filter(
+				student => student.studentid !== studentToDelete.studentid
+			)
+		);
 	};
 
-	const updateRating = async (e, movieToUpdate) => {
+	const deleteSchool = async (e, schoolToDelete) => {
 		e.preventDefault();
-		let rating = e.target.previousElementSibling.value;
-		let id = movieToUpdate.id;
-		try {
-			axios.put(`/api/movies/`, { id, rating }).then(response => {
-				let words = [...movies.filter(movie => movie.id !== id), response.data];
-				setMovies(words);
-			});
-		} catch (ex) {
-			console.log(ex.response.data.message);
-		}
+		await axios
+			.delete(`/api/schools/${schoolToDelete.schoolid}`)
+			.then(response => console.log(response));
+		setSchools(
+			schools.filter(school => school.schoolid !== schoolToDelete.schoolid)
+		);
 	};
-	console.log(movies);
+
+	const destroyStudentSchool = async (e, studentSchoolToDelete) => {
+		e.preventDefault();
+		await axios
+			.delete(`/api/studentSchools/${studentSchoolToDelete.id}`)
+			.then(response => console.log(response));
+		setstudentSchools(
+			studentSchools.filter(
+				studentSchool => studentSchool.id !== studentSchoolToDelete.id
+			)
+		);
+	};
+
+	const updateStudentSchool = async (e, school) => {
+		e.preventDefault();
+		let student = getStudentIdByName(e.target[0].value, students);
+		let studentSchoolToCreate = {
+			schoolId: `${school.schoolid}`,
+			studentId: `${student[0].studentid}`
+		};
+		await axios
+			.post("/api/studentSchools", studentSchoolToCreate)
+			.then(response => {
+				let copy = [...studentSchools];
+				copy.push(response.data);
+				setstudentSchools(copy);
+			});
+	};
+
+	const updateStudent = async (e, student) => {
+		e.preventDefault();
+		if (e.target[1].value !== "none") {
+			updateStudentSchool(e, school);
+		}
+		console.log(e.target.parentElement[0].value);
+		student.name = e.target[0].value;
+		await axios.put("/api/students", student).then(response => {
+			setstudents(response.data);
+		});
+	};
+
+	const updateSchool = async (e, school) => {
+		e.preventDefault();
+		school.name = e.target.parentElement[0].value;
+		console.log(school);
+		await axios.put("/api/schools", school).then(response => {
+			console.log(response.data);
+			setSchools(response.data);
+		});
+	};
+
+	// console.log(students, schools, studentSchools);
+	let unenrolled = getUnenrolled(students, studentSchools);
+	let enrolled = students.length - unenrolled.length;
 
 	return (
-		<Router>
-			<div>
-				<nav className="nav">
-					<Link to="/">Home</Link>
-					<Link to="/list">Full List</Link>
-				</nav>
-				<Switch>
-					<Route path="/list">
-						<FullList
-							movies={movies}
-							createMovie={createMovie}
-							updateRating={updateRating}
-							destroyMovie={destroyMovie}
-						/>
-					</Route>
-					<Route path="/">
-						<Home
-							movies={movies}
-							createMovie={createMovie}
-							updateRating={updateRating}
-							destroyMovie={destroyMovie}
-						/>
-					</Route>
-				</Switch>
-			</div>
-		</Router>
+		<Main
+			schools={schools}
+			students={students}
+			studentSchools={studentSchools}
+			unenrolled={unenrolled}
+			enrolled={enrolled}
+			createSchool={createSchool}
+			createStudent={createStudent}
+			deleteSchool={deleteSchool}
+			deleteStudent={deleteStudent}
+			destroyStudentSchool={destroyStudentSchool}
+			updateStudentSchool={updateStudentSchool}
+			updateStudent={updateStudent}
+			updateSchool={updateSchool}
+		/>
 	);
 }
 
 export default App;
-//

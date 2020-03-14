@@ -1,67 +1,118 @@
 const pg = require("pg");
+const uuid = require("uuidv4");
 
 const client = new pg.Client(
-	process.env.DATABASE_URL || "postgres://localhost/movie_db"
+	process.env.DATABASE_URL || "postgres://localhost/acme_school"
 );
 
 client.connect();
 
 const sync = async () => {
-	const SQL = `
-  DROP TABLE IF EXISTS movies;
+	const SQL = `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+	DROP TABLE IF EXISTS student_school;
+	DROP TABLE IF EXISTS schools;
+	DROP TABLE IF EXISTS students;
 
-  CREATE TABLE movies(
-    id SERIAL,
-    Title VARCHAR(255) NOT NULL UNIQUE,
-    Year VARCHAR(255),
-    Poster VARCHAR(65535),
-    Overview VARCHAR(65535),
-    UserRating FLOAT,
-    VoteAVG FLOAT,
-		Background VARCHAR(65535),
-		DateWatched DATE
-  );
-  INSERT INTO movies (Title, Year, Poster, Overview, UserRating, VoteAvg, Background, DateWatched) VALUES ('Parasite', '2019-11-8',
-   'https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg
-  ', '"All unemployed, Ki-taeks family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident."', '9', '8.6', '/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg', '2020-03-08');`;
-	client.query(SQL);
+  CREATE TABLE students(
+		studentId UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+		Name VARCHAR(255) UNIQUE NOT NULL
+	);
+
+	CREATE TABLE schools(
+		schoolId UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+		Name VARCHAR(255) UNIQUE NOT NULL
+	);
+
+	CREATE TABLE student_school(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    schoolId UUID REFERENCES schools(schoolId),
+    studentId UUID REFERENCES students(studentId)
+	);
+
+	INSERT INTO students (name) VALUES ('Ryan');
+  INSERT INTO schools (name) VALUES ('UNF');
+  INSERT INTO student_school (studentId, schoolId)
+		VALUES ((SELECT studentId FROM students WHERE name = 'Ryan'),
+            (SELECT schoolId FROM schools WHERE name = 'UNF'));`;
+	await client.query(SQL);
 };
 
-const readMovies = async () => {
-	const SQL = "SELECT * from movies";
-	return (await client.query(SQL)).rows;
+const readStudents = async () => {
+	const SQL = `SELECT * FROM students;`;
+	const response = await client.query(SQL);
+	return response.rows;
 };
 
-const addMovie = async movie => {
-	const SQL =
-		"INSERT INTO movies(Title, Year, Poster, Overview, VoteAVG, Background, DateWatched) values($1, $2, $3, $4, $5, $6, $7) returning *";
-	return (
-		await client.query(SQL, [
-			movie.original_title,
-			movie.release_date,
-			movie.poster,
-			movie.overview,
-			movie.vote_average,
-			movie.backdrop_path,
-			movie.dateWatched
-		])
-	).rows[0];
+const readSchools = async () => {
+	const SQL = `SELECT * FROM schools;`;
+	const response = await client.query(SQL);
+	return response.rows;
 };
 
-const delMovie = async id => {
-	const SQL = "DELETE FROM movies where id= $1";
+const readStudentSchools = async () => {
+	const SQL = "SELECT * FROM student_school";
+	const response = await client.query(SQL);
+	return response.rows;
+};
+
+const addStudent = async name => {
+	const SQL = `INSERT INTO students (name) VALUES ($1) returning *;`;
+	const response = await client.query(SQL, [name]);
+	return response.rows;
+};
+
+const addSchool = async name => {
+	const SQL = `INSERT INTO schools (name) VALUES ($1) returning *;`;
+	const response = await client.query(SQL, [name]);
+	return response.rows;
+};
+
+const addStudentSchool = async (studentId, schoolId) => {
+	const SQL = `INSERT INTO student_school 
+  (studentId, 
+		schoolId) 
+  VALUES  ($1,$2)
+    returning *;`;
+	const response = await client.query(SQL, [studentId, schoolId]);
+	return response.rows[0];
+};
+
+const destroyStudent = async id => {
+	const SQL = `DELETE FROM students WHERE studentId = $1;`;
 	await client.query(SQL, [id]);
 };
 
-const upMovie = async (id, rating) => {
-	const SQL = "UPDATE movies SET UserRating = $1 WHERE id = $2 returning *;";
-	return (await client.query(SQL, [rating, id])).rows[0];
+const destroySchool = async id => {
+	const SQL = `DELETE FROM schools WHERE schoolId = $1;`;
+	await client.query(SQL, [id]);
+};
+
+const destroyStudentSchool = async id => {
+	const SQL = `DELETE FROM student_school WHERE id = $1;`;
+	await client.query(SQL, [id]);
+};
+
+const updateStudent = async (id, name) => {
+	const SQL = `UPDATE students SET Name=$1 WHERE studentId = $2 returning *;`;
+	await client.query(SQL, [name, id]);
+};
+
+const updateSchool = async (id, name) => {
+	const SQL = `UPDATE schools SET Name=$1 WHERE schoolId = $2 returning *;`;
+	await client.query(SQL, [name, id]);
 };
 
 module.exports = {
 	sync,
-	readMovies,
-	addMovie,
-	delMovie,
-	upMovie
+	readStudents,
+	readSchools,
+	readStudentSchools,
+	addStudent,
+	addSchool,
+	addStudentSchool,
+	destroyStudent,
+	destroySchool,
+	destroyStudentSchool,
+	updateSchool,
+	updateStudent
 };

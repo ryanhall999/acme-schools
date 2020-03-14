@@ -1,105 +1,53 @@
-.outerBox {
+.mainBody {
 	display: flex;
 	flex-direction: column;
 }
 
-.stats {
+.createBoxes {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-evenly;
+}
+
+.createStudent {
+	border: solid 1px black;
+	width: 45%;
 	padding: 2rem;
 	margin: 1rem;
-	border-bottom: 3px solid white;
 }
 
-.innerBox {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-}
-
-.addMovie {
-	flex-grow: 1;
-	margin: 1rem;
-	border-right: solid 3px white;
-	padding: 1rem;
-}
-
-.movieList {
-	flex-grow: 3;
-	margin: 1rem;
-}
-
-.film {
-	display: flex;
-	flex-direction: row;
-	border: 1px solid;
-	margin: 2rem;
+.createSchool {
+	border: solid 1px black;
+	width: 45%;
 	padding: 2rem;
-	color: rgba(224, 213, 190, 0.845);
-	background-size: 100% 100%;
-	opacity: 95%;
-	box-shadow: 5px 5px 15px 5px #000000;
-	text-shadow: 2px 2px 2px #000000;
-	border-radius: 10px;
-}
-
-.listContainer {
-	display: flex;
-	flex-direction: row;
-}
-
-li {
-	list-style-type: none;
-}
-
-body {
-	font-size: 16px;
-	color: white;
-	font-family: "Arial Black", Gadget, sans-serif;
-	font-size: 16px;
-	letter-spacing: 2px;
-	word-spacing: 2px;
-	font-weight: 700;
-	font-style: normal;
-	font-variant: small-caps;
-	background-image: url("https://media.istockphoto.com/vectors/illustration-of-film-reel-stripe-on-abstract-background-vector-id893522844?k=6&m=893522844&s=170667a&w=0&h=Y0YAPQcDgwlwMU0oFZHHkbqUQwd_w1hE8BnCGk8dhcw=");
-	background-size: 100% 100%;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	text-shadow: 2px 2px 2px #000000;
-}
-
-.filmInfo {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-evenly;
-	padding: 1rem;
-}
-.ratingInfo {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-evenly;
-	padding: 1rem;
-}
-
-form {
-	padding: 1rem;
-	margin: 1rem, 1rem, 1rem, 0;
-}
-
-.dayList {
-	font-size: smaller;
-}
-
-.nav {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-evenly;
-	padding: 1rem;
-	border-bottom: 2px solid white;
-}
-
-.film button {
 	margin: 1rem;
+}
+
+.unenrolled {
+	border: solid 1px black;
+	padding: 2rem;
+	margin: 1rem;
+	flex-basis: 28%;
+}
+.lists {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+}
+.school {
+	border: solid 1px black;
+	padding: 2rem;
+	margin: 1rem;
+	flex-basis: 28%;
+}
+
+button {
+	height: 1rem;
+	width: 2rem;
+}
+
+.schoolsList {
+	display: flex;
+	flex-direction: row;
 }
